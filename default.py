@@ -107,6 +107,7 @@ def CATEGORIES(url,page):
     html = load(url).encode('utf-8')
     doc = bs4.BeautifulSoup(html)
     xbmc.log(str(doc.title))
+
     items = doc.find("div", "parts-list").ul
     items = items.findAll('li')
     desc = str(doc.title)
@@ -117,6 +118,8 @@ def CATEGORIES(url,page):
 	    if "slowtv" in url:
 			continue 
             title = urlel.getText(" ").encode('windows-1250')
+	    urlel = item.find("p")
+            desc = urlel.getText(" ").encode('windows-1250')
 	    thumb = "http:" + item.find("img")['src']                       
             addDir(title,url,2,thumb,1,desc)
 
@@ -131,6 +134,17 @@ def INDEX(url,page):
 		desc = ""
 
     items = doc.find("div", "parts-list").ul
+    items = items.findAll('li')
+
+    for item in items:
+            urlel = item.find("a")
+            url = urlel['href']
+            title = urlel.getText().strip()
+	    title = title.encode('windows-1250','replace')
+	    thumb = "http:" + item.find("img")['src']                       
+            addDir(title,url,4,thumb,1,desc)
+
+    items = doc.find("div", "pack").ul
     items = items.findAll('li')
 
     for item in items:
