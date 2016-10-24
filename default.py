@@ -54,28 +54,20 @@ def NEW(url,page):
 		desc = ""
 
     #Prvni tri nejnovejsi porady
-    items = doc.find("ul", "slider-a parts-list")
-    items = items.findAll('li')
-
-    for item in items:
-            urlel = item.find("a")
-            url = urlel['href']
-	    img = item.find("img")
-	    #ToDo: doresit kodovani
-            title = urlel.getText().strip().encode('windows-1250','replace') + " - " + img['alt'].encode('utf','ignore')	    
-	    thumb = "http:" + img['src']                       
-            addDir(title,url,4,thumb,1,desc)
+    items_doc = doc.find("ul", "slider-a parts-list")
+    items = items_doc.findAll('li')
 
     #Dalsi nejnovejsi porady
-    items = doc.find("div", "parts-list")
-    items = items.findAll('li')
+    items_doc = doc.find("div", "parts-list")
+    items = items + items_doc.findAll('li')
 
     for item in items:
             urlel = item.find("div","cell").find("a")
             url = urlel['href']
-	    img = item.find("img")
-	    #ToDo: doresit kodovani
-            title = urlel.getText().strip().encode('windows-1250','replace') + " - " + img['alt'].encode('windows-1250','replace')	    
+            nazev = urlel.getText().strip().encode('windows-1250','replace')
+            img = item.find("img")
+            urlel = item.find("a")	    
+            title = urlel.getText().strip().encode('windows-1250','replace') + " - " + nazev	    
 	    thumb = "http:" + img['src']                       
             addDir(title,url,4,thumb,1,desc)
 
@@ -96,9 +88,10 @@ def HITS(url,page):
     for item in items:
             urlel = item.find("div","cell").find("a")
             url = urlel['href']
-	    img = item.find("img")
-	    #ToDo: doresit kodovani
-            title = urlel.getText().strip().encode('windows-1250','replace') + " - " + img['alt'].encode('windows-1250','replace')	    
+            nazev = urlel.getText().strip().encode('windows-1250','replace')
+            img = item.find("img")
+            urlel = item.find("a")	    
+            title = urlel.getText().strip().encode('windows-1250','replace') + " - " + nazev	    
 	    thumb = "http:" + img['src']                       
             addDir(title,url,4,thumb,1,desc)
 
@@ -144,16 +137,20 @@ def INDEX(url,page):
 	    thumb = "http:" + item.find("img")['src']                       
             addDir(title,url,4,thumb,1,desc)
 
-    items = doc.find("div", "pack").ul
-    items = items.findAll('li')
+    try:
 
-    for item in items:
-            urlel = item.find("a")
-            url = urlel['href']
-            title = urlel.getText().strip()
-	    title = title.encode('windows-1250','replace')
-	    thumb = "http:" + item.find("img")['src']                       
-            addDir(title,url,4,thumb,1,desc)
+	    items = doc.find("div", "pack").ul
+	    items = items.findAll('li')
+
+	    for item in items:
+		    urlel = item.find("a")
+		    url = urlel['href']
+		    title = urlel.getText().strip()
+		    title = title.encode('windows-1250','replace')
+		    thumb = "http:" + item.find("img")['src']                       
+		    addDir(title,url,4,thumb,1,desc)
+    except:
+      	    pass
 
 def VIDEOLINK(url,name):
 
@@ -161,6 +158,8 @@ def VIDEOLINK(url,name):
     doc = bs4.BeautifulSoup(html)
     video = doc.findAll("meta", property="og:video:url")
     video_name = name
+
+    porad = doc.find("div", "playtvak-info").findAll("a", "btn")
 
     for item in video:
 		if "configURL=" in item['content']:
@@ -174,7 +173,11 @@ def VIDEOLINK(url,name):
 			for video in linkvideo.findAll("file"):
 				name = "Kvalita: " + video['quality']
 				url = server + video.getText()
-				addLink(name,video_name, url,"http:"+thumb,desc)           
+				addLink(name,video_name, url,"http:"+thumb,desc)
+    for li in porad:
+	urlporad = li['href']
+
+    addDir("[COLOR blue]Další díly pořadu >>>[/COLOR]",urlporad,2,thumb,1,"Přejít na další epizody aktuální pořadu")          
 
 def get_params():
         param=[]
