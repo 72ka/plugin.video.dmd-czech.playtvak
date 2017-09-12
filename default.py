@@ -159,14 +159,14 @@ def VIDEOLINK(url,name):
     video = doc.findAll("meta", property="og:video:url")
     video_name = name
 
-    porad = doc.find("div", "playtvak-info").findAll("a", "btn")
+    porad = doc.find("div", "playtvak-info").find("a", "btn")
 
     for item in video:
 		if "configURL=" in item['content']:
-	    		xmlurl = item['content'].replace("http://g.idnes.cz/swf/flv/player.swf?configURL=","")
+	    		xmlurl = item['content'].replace("//1gr.cz/swf/flv/player.swf?configURL=","")
 			configxml = load(xmlurl).encode('utf-8')
     			configxml = bs4.BeautifulSoup(configxml)
-			thumb = configxml.find("imageprev").getText()
+			thumb = "http:" + configxml.find("imageprev").getText()
 			desc = configxml.find("title").getText()
 			linkvideo = configxml.find("linkvideo")
 			server = linkvideo.find("server").getText()
@@ -174,10 +174,10 @@ def VIDEOLINK(url,name):
 				name = "Kvalita: " + video['quality']
 				url = server + video.getText()
 				addLink(name,video_name, url,"http:"+thumb,desc)
-    for li in porad:
-	urlporad = li['href']
 
-    addDir("[COLOR blue]Další díly pořadu >>>[/COLOR]",urlporad,2,thumb,1,"Přejít na další epizody aktuální pořadu")          
+    urlporad = porad['href'].replace("?playList=all","")
+
+    addDir("[COLOR blue]Další díly pořadu >>>[/COLOR]",urlporad,2,thumb,1,"Přejít na další epizody aktuálního pořadu")          
 
 def get_params():
         param=[]

@@ -1,3 +1,7 @@
+2017-08-12:
+ * oprava přehrávání
+ * oprava přechodu na "Další díly pořadu"
+ * nová hlavní ikona (díky MarhyCZ)
 ﻿2016-10-24:
  * v 1.0.2
  * opravy chyb z 1.0.1 (některé pořady nešly vůbec listovat)
