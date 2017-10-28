@@ -21,6 +21,7 @@ home = __settings__.getAddonInfo('path')
 icon = xbmc.translatePath( os.path.join( home, 'icon.png' ) )
 nexticon = xbmc.translatePath( os.path.join( home, 'nextpage.png' ) )
 fanart = xbmc.translatePath( os.path.join( home, 'fanart.jpg' ) )
+defaultprotocol = 'http:'
 
 #Nacteni informaci o doplnku
 __addon__      = xbmcaddon.Addon()
@@ -36,6 +37,14 @@ def log(msg):
 def load(url):
     r = requests.get(url)
     return r.text
+
+def normalize_url(url):
+    if not url.startswith('http://') and not url.startswith('https://'):
+        if url.startswith('//'):
+            return defaultprotocol + url
+        else:
+            return defaultprotocol + '//' + url
+    return url
 
 def OBSAH():
     addDir('Nejnovější epizody','http://www.playtvak.cz',6,icon,1,"Playtvak.cz - Nejnovější epizody")
@@ -68,7 +77,7 @@ def NEW(url,page):
             img = item.find("img")
             urlel = item.find("a")	    
             title = urlel.getText().strip().encode('windows-1250','replace') + " - " + nazev	    
-	    thumb = "http:" + img['src']                       
+	    thumb = normalize_url(img['src'])
             addDir(title,url,4,thumb,1,desc)
 
 def HITS(url,page):
@@ -92,7 +101,7 @@ def HITS(url,page):
             img = item.find("img")
             urlel = item.find("a")	    
             title = urlel.getText().strip().encode('windows-1250','replace') + " - " + nazev	    
-	    thumb = "http:" + img['src']                       
+	    thumb = normalize_url(img['src'])
             addDir(title,url,4,thumb,1,desc)
 
 def CATEGORIES(url,page):
@@ -113,7 +122,7 @@ def CATEGORIES(url,page):
             title = urlel.getText(" ").encode('windows-1250')
 	    urlel = item.find("p")
             desc = urlel.getText(" ").encode('windows-1250')
-	    thumb = "http:" + item.find("img")['src']                       
+	    thumb = normalize_url(item.find("img")['src'])
             addDir(title,url,2,thumb,1,desc)
 
 def INDEX(url,page):
@@ -134,7 +143,7 @@ def INDEX(url,page):
             url = urlel['href']
             title = urlel.getText().strip()
 	    title = title.encode('windows-1250','replace')
-	    thumb = "http:" + item.find("img")['src']                       
+	    thumb = normalize_url(item.find("img")['src'])
             addDir(title,url,4,thumb,1,desc)
 
     try:
@@ -147,7 +156,7 @@ def INDEX(url,page):
 		    url = urlel['href']
 		    title = urlel.getText().strip()
 		    title = title.encode('windows-1250','replace')
-		    thumb = "http:" + item.find("img")['src']                       
+		    thumb = normalize_url(item.find("img")['src'])
 		    addDir(title,url,4,thumb,1,desc)
     except:
       	    pass
@@ -163,17 +172,17 @@ def VIDEOLINK(url,name):
 
     for item in video:
 		if "configURL=" in item['content']:
-	    		xmlurl = item['content'].replace("//1gr.cz/swf/flv/player.swf?configURL=","")
+	    		xmlurl = item['content'].split("configURL=")[1]
 			configxml = load(xmlurl).encode('utf-8')
     			configxml = bs4.BeautifulSoup(configxml)
-			thumb = "http:" + configxml.find("imageprev").getText()
+			thumb = normalize_url(configxml.find("imageprev").getText())
 			desc = configxml.find("title").getText()
 			linkvideo = configxml.find("linkvideo")
 			server = linkvideo.find("server").getText()
 			for video in linkvideo.findAll("file"):
 				name = "Kvalita: " + video['quality']
-				url = server + video.getText()
-				addLink(name,video_name, url,"http:"+thumb,desc)
+				url = normalize_url(server + "/" + video.getText())
+				addLink(name, video_name, url, thumb, desc)
 
     urlporad = porad['href'].replace("?playList=all","")
 
