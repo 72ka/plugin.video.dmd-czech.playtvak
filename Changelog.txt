@@ -1,3 +1,5 @@
+2017-10-28:
+ * oprava přehrávání (díky WallyCZ)
 2017-08-12:
  * oprava přehrávání
  * oprava přechodu na "Další díly pořadu"
