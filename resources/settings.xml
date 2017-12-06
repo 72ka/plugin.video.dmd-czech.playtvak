@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <setting id="auto_quality" type="bool" label="30008" default="true" />
+    <setting id="quality" type="labelenum" label="30000" values="high|middle" default="high" enable="eq(-1,true)" />
+</settings>

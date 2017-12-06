@@ -30,6 +30,19 @@ __addonid__    = __addon__.getAddonInfo('id')
 __cwd__        = __addon__.getAddonInfo('path').decode("utf-8")
 __language__   = __addon__.getLocalizedString
 
+# Prvni spusteni
+if not (__addon__.getSetting("settings_init_done") == "true"):
+        DEFAULT_SETTING_VALUES = {"quality": "high",
+                                  "auto_quality": "true"}
+        for setting in DEFAULT_SETTING_VALUES.keys():
+            val = __addon__.getSetting(setting)
+            if not val:
+                __addon__.setSetting(setting, DEFAULT_SETTING_VALUES[setting])
+        __addon__.setSetting("settings_init_done", "true")
+    ###############################################################################
+_auto_quality_ = (__addon__.getSetting('auto_quality') == "true")
+_quality_ = __addon__.getSetting('quality')
+
 
 def log(msg):
     xbmc.log(("### [%s] - %s" % (__addonname__.decode('utf-8'), msg.decode('utf-8'))).encode('utf-8'), level=xbmc.LOGDEBUG)
@@ -171,22 +184,36 @@ def VIDEOLINK(url,name):
     porad = doc.find("div", "playtvak-info").find("a", "btn")
 
     for item in video:
-		if "configURL=" in item['content']:
-	    		xmlurl = item['content'].split("configURL=")[1]
-			configxml = load(xmlurl).encode('utf-8')
-    			configxml = bs4.BeautifulSoup(configxml)
-			thumb = normalize_url(configxml.find("imageprev").getText())
-			desc = configxml.find("title").getText()
-			linkvideo = configxml.find("linkvideo")
-			server = linkvideo.find("server").getText()
-			for video in linkvideo.findAll("file"):
-				name = "Kvalita: " + video['quality']
-				url = normalize_url(server + "/" + video.getText())
-				addLink(name, video_name, url, thumb, desc)
+        if "configURL=" in item['content']:
+            xmlurl = item['content'].split("configURL=")[1]
+            configxml = load(xmlurl).encode('utf-8')
+            configxml = bs4.BeautifulSoup(configxml)
+            thumb = normalize_url(configxml.find("imageprev").getText())
+            desc = configxml.find("title").getText()
+            linkvideo = configxml.find("linkvideo")
+            server = linkvideo.find("server").getText()
+            url = None
+            if _auto_quality_:
+                for video in linkvideo.findAll("file"):
+                    if video['quality'] == _quality_:
+                        url = normalize_url(server + "/" + video.getText())
+                # v pripade, ze zvolena kvalita nebyla nalezena, prehraj
+                # posledni match
+                if not url:
+                    print('Expected quality not found, playing the last link')
+                    url = normalize_url(server + "/" + video.getText())
+
+                player = xbmc.Player()
+                player.play(url)
+            else:
+                for video in linkvideo.findAll("file"):
+                    name = "Kvalita: " + video['quality']
+                    url = normalize_url(server + "/" + video.getText())
+                    addLink(name, video_name, url, thumb, desc)
 
     urlporad = porad['href'].replace("?playList=all","")
 
-    addDir("[COLOR blue]Další díly pořadu >>>[/COLOR]",urlporad,2,thumb,1,"Přejít na další epizody aktuálního pořadu")          
+    addDir("[COLOR blue]Další díly pořadu >>>[/COLOR]",urlporad,2,thumb,1,"Přejít na další epizody aktuálního pořadu")
 
 def get_params():
         param=[]
