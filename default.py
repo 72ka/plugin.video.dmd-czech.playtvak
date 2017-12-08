@@ -33,7 +33,9 @@ __language__   = __addon__.getLocalizedString
 # Prvni spusteni
 if not (__addon__.getSetting("settings_init_done") == "true"):
         DEFAULT_SETTING_VALUES = {"quality": "high",
-                                  "auto_quality": "true"}
+                                  "auto_quality": "true",
+                                  "skip_logo": "false",
+                                  }
         for setting in DEFAULT_SETTING_VALUES.keys():
             val = __addon__.getSetting(setting)
             if not val:
@@ -42,6 +44,7 @@ if not (__addon__.getSetting("settings_init_done") == "true"):
     ###############################################################################
 _auto_quality_ = (__addon__.getSetting('auto_quality') == "true")
 _quality_ = __addon__.getSetting('quality')
+_skip_logo_ = (__addon__.getSetting('skip_logo') == "true")
 
 
 def log(msg):
@@ -205,6 +208,11 @@ def VIDEOLINK(url,name):
 
                 player = xbmc.Player()
                 player.play(url)
+                if _skip_logo_:
+                    while not player.isPlaying():
+                        pass
+                    time.sleep(1)
+                    player.seekTime(6)
             else:
                 for video in linkvideo.findAll("file"):
                     name = "Kvalita: " + video['quality']

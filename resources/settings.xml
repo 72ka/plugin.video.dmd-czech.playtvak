@@ -2,4 +2,5 @@
 <settings>
     <setting id="auto_quality" type="bool" label="30008" default="true" />
     <setting id="quality" type="labelenum" label="30000" values="high|middle" default="high" enable="eq(-1,true)" />
+    <setting id="skip_logo" type="bool" label="30009" default="false" enable="eq(-2,true)" />
 </settings>

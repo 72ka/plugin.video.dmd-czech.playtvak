@@ -2,4 +2,5 @@
 <strings>
 	<string id="30000">Quality</string>
 	<string id="30008">Automatic quality</string>
+	<string id="30009">Skip initial logo</string>
 </strings>
