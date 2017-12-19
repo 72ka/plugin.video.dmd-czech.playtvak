@@ -1,5 +1,5 @@
 2017-12-07:
- * pridany automaticky vyber kvality
+ * pridany automaticky vyber kvality (díky jose1711)
 2017-10-28:
  * oprava přehrávání (díky WallyCZ)
 2017-08-12:
