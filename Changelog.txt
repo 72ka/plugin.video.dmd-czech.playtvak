@@ -1,3 +1,5 @@
+2017-12-07:
+ * pridany automaticky vyber kvality
 2017-10-28:
  * oprava přehrávání (díky WallyCZ)
 2017-08-12:
