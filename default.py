@@ -143,11 +143,11 @@ def CATEGORIES(url,page):
 
 def INDEX(url,page):
 
-    html = load(url).encode('utf-8')
+    html = load(url)
     doc = bs4.BeautifulSoup(html)
     xbmc.log(str(doc.title))
     try:
-    		desc = doc.find("div", "colophon").p.getText(" ").encode('windows-1250')
+    		desc = doc.find("div", "colophon").p.getText(" ").encode('utf-8')
     except:
 		desc = ""
 
@@ -158,7 +158,7 @@ def INDEX(url,page):
             urlel = item.find("a")
             url = urlel['href']
             title = urlel.getText().strip()
-	    title = title.encode('windows-1250','replace')
+	    title = title.encode('utf-8')
 	    thumb = normalize_url(item.find("img")['src'])
             addDir(title,url,4,thumb,1,desc)
 
@@ -171,7 +171,7 @@ def INDEX(url,page):
 		    urlel = item.find("a")
 		    url = urlel['href']
 		    title = urlel.getText().strip()
-		    title = title.encode('windows-1250','replace')
+		    title = title.encode('utf-8')
 		    thumb = normalize_url(item.find("img")['src'])
 		    addDir(title,url,4,thumb,1,desc)
     except:
