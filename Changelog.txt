@@ -1,3 +1,5 @@
+2018-01-16:
+ * pridana moznost preskoceni uvodniho loga (díky jose1711)
 2017-12-07:
  * pridany automaticky vyber kvality (díky jose1711)
 2017-10-28:
